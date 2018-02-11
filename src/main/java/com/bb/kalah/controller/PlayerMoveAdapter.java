@@ -12,6 +12,7 @@ public class PlayerMoveAdapter {
             return null;
         }
         PlayerMoveView playerMoveView = new PlayerMoveView();
+        playerMoveView.setPlayerId(playerMove.getPlayerId());
         playerMoveView.setPlayerName(playerMove.getPlayer() == null ? null : playerMove.getPlayer().getName());
         playerMoveView.setStartPid(playerMove.getStartPit());
 

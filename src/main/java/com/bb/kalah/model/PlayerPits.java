@@ -8,7 +8,7 @@ public class PlayerPits implements Sowable {
     private static final int PITS_NR = 6;
 
     int[] pits;
-    private int seedsPerPit;
+    int seedsPerPit;
     PlayerPart playerPart;
 
     public PlayerPits(PlayerPart playerPart, int seedsPerPit) {
@@ -42,7 +42,7 @@ public class PlayerPits implements Sowable {
      * adds seeds to given pits
      * @param seedsAmount amount of seeds to add
      * @param startPit start pit
-     * @return
+     * @return sow result
      */
     public SowResult sowSeeds(int seedsAmount, int startPit){
         //some checks, should never happen though
@@ -71,13 +71,11 @@ public class PlayerPits implements Sowable {
     }
 
     public String toString(){
-        StringBuilder sb = new StringBuilder();
-        sb.append(IntStream.of(pits).mapToObj(String::valueOf)
-                .collect(Collectors.joining(" | ", "| ", " |")));
-        sb.append(System.getProperty("line.separator"));
-        sb.append(IntStream.range(0, pits.length).mapToObj(String::valueOf)
-                .collect(Collectors.joining(" * ", "* ", " *")));
-        return sb.toString();
+        return IntStream.of(pits).mapToObj(String::valueOf)
+                .collect(Collectors.joining(" | ", "| ", " |")) +
+                System.getProperty("line.separator") +
+                IntStream.range(0, pits.length).mapToObj(String::valueOf)
+                        .collect(Collectors.joining(" * ", "* ", " *"));
     }
 
     public int[] getPits() {

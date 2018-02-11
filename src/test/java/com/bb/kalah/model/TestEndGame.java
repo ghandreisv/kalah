@@ -25,7 +25,7 @@ public class TestEndGame extends TestRoot {
         gameSession.getPlayerA().getPits().pits = new int[]{0, 0, 0, 0, 0, 1};
         gameSession.handlePlayerMove(gameSession.getPlayerA().getId(), 5);
         gameSession.handlePlayerMove(gameSession.getPlayerA().getId(), 5);
-        assertFalse("Player move should not be allowed after game end", gameSession.getLastMove().isOk());
+        assertFalse("Player move should not be allowed after game end", gameSession.getLastMoveResult().isOk());
         // check pits
         assertTrue("Found non empty pits after game end (Player A)", gameSession.getPlayerA().getPits().isEmpty());
         assertTrue("Found non empty pits after game end (Player B)", gameSession.getPlayerB().getPits().isEmpty());

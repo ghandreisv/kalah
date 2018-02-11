@@ -3,10 +3,10 @@ package com.bb.kalah.view;
 import lombok.Data;
 
 @Data
-public class MoveResultView {
+public class PlayerMoveResultView {
 
     private GameSessionView gameSessionView;
-    private boolean isSuccesful;
+    private Boolean isSuccesful;
     private String message;
 
 }

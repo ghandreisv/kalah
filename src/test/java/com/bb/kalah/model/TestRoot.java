@@ -1,7 +1,5 @@
 package com.bb.kalah.model;
 
-import com.bb.kalah.model.GameSession;
-import com.bb.kalah.model.GameSessionManager;
 import org.junit.Before;
 
 public class TestRoot {

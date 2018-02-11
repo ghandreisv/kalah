@@ -17,6 +17,7 @@ public class GameSession {
     private GameStatus status;
 
     private PlayerMove lastMove;
+    private PlayerMoveResult lastMoveResult;
 
     public GameSession(Long gameSessionId, PlayerPart playerA, PlayerPart playerB){
         this.gameSessionId = gameSessionId;
@@ -28,50 +29,52 @@ public class GameSession {
         log.debug(GameSessionPrinter.INSTANCE.printGameSession(this));
     }
 
-    public void handlePlayerMove(long playerId, int startPit) {
+    public PlayerMoveResult handlePlayerMove(long playerId, int startPit) {
         PlayerMove playerMove = PlayerMove.createPlayerMove(this, playerId, startPit);
-        handlePlayerMove(playerMove);
-    }
-
-    public void handlePlayerMove(PlayerMove playerMove){
         this.lastMove = playerMove;
-        if(playerMove.isOk()) {
-            validateMove(playerMove);
-            if (playerMove.isOk()) {
+        this.lastMoveResult = new PlayerMoveResult();
+
+        if(validateMove(playerMove, lastMoveResult)) {
                 PlayerPart currentPlayer = playerMove.getPlayer();
-                int startPit = playerMove.getStartPit();
                 int seedsAmount = currentPlayer.getPits().pickSeeds(startPit);
                 SowResult sowResult = sowSeeds(
                         new Sowable[]{currentPlayer.getPits(), currentPlayer.getKalah(), getOtherPlayer(currentPlayer).getPits()},
                         startPit + 1, seedsAmount);
                 endPlayerMove(currentPlayer, sowResult);
-            }
         }
         log.debug(GameSessionPrinter.INSTANCE.printGameSession(this));
+        return lastMoveResult;
     }
 
-    private void validateMove(PlayerMove playerMove){
+    private boolean validateMove(PlayerMove playerMove, PlayerMoveResult playerMoveResult){
+        // check player was found
+        if(playerMove.getPlayer() == null) {
+            playerMoveResult.errorResult(String.format("Player id=%d not found in game session id=%d",
+                    playerMove.getPlayerId(), getGameSessionId()));
+            return false;
+        }
         // check game is still running
         if(GameStatus.ENDED.equals(status)){
-            playerMove.errorResult("Moves not allowed after game is ended");
-            return;
+            playerMoveResult.errorResult("Moves not allowed after game is ended");
+            return false;
         }
         //check it is player's turn
         if(playerMove.getPlayer() != nextPlayer) {
-            playerMove.errorResult("It is opponent's turn");
-            return;
+            playerMoveResult.errorResult("It is opponent's turn");
+            return false;
         }
         //check pit index is in range
         if(playerMove.getStartPit() > playerMove.getPlayer().getPits().getPitsNumber() -1 || playerMove.getStartPit() < 0) {
-            playerMove.errorResult(String.format("Invalid pit index '%d' expected a value in range [0;%d]",
+            playerMoveResult.errorResult(String.format("Invalid pit index '%d' expected a value in range [0;%d]",
                     playerMove.getStartPit(), playerMove.getPlayer().getPits().getPitsNumber() -1));
-            return;
+            return false;
         }
         //check pit is not empty
         if(playerMove.getPlayer().getPits().getSeedsAmount(playerMove.getStartPit()) == 0) {
-            playerMove.errorResult("The selected pit is empty");
-            return;
+            playerMoveResult.errorResult("The selected pit is empty");
+            return false;
         }
+        return true;
     }
 
     private SowResult sowSeeds(Sowable[] sowables, int startPit, int seedsAmount) {
@@ -101,6 +104,8 @@ public class GameSession {
         if(playerA.getPits().isEmpty() || playerB.getPits().isEmpty()) {
             playerA.getKalah().addSeeds(playerA.getPits());
             playerB.getKalah().addSeeds(playerB.getPits());
+            lastMoveResult.setMessage("Game over! Winner="
+                    + (playerA.getKalah().getSeedsAmount() > playerB.getKalah().getSeedsAmount() ? playerA.getName() : playerB.getName()));
             closeSession();
         }
         //calc next turn player

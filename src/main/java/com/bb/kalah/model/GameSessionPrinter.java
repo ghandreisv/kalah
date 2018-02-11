@@ -8,14 +8,9 @@ public enum GameSessionPrinter {
         StringBuilder sb = new StringBuilder();
         sb.append("\nGame status: ").append(gameSession.getStatus());
         //last move
-        sb.append("\nLast move: ");
-        if(gameSession.getLastMove()!=null) {
-            sb.append("Player=")
-                    .append(gameSession.getLastMove().getPlayer() == null ? "null" : gameSession.getLastMove().getPlayer().getName());
-            sb.append(";startPit=").append(gameSession.getLastMove().getStartPit());
-        } else {
-            sb.append("null");
-        }
+        sb.append("\nLast move: ").append(gameSession.getLastMove());
+        //last result
+        sb.append("\nLast move result: ").append(gameSession.getLastMoveResult());
         /* player A */
         sb.append("\nPlayer ").append(gameSession.getPlayerA().getName());
         if (gameSession.getNextPlayer() == gameSession.getPlayerA()) {
