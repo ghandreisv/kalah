@@ -1,5 +1,8 @@
 package com.bb.kalah.model;
 
+/**
+ * Game session printer utility singleton
+ */
 public enum GameSessionPrinter {
 
     INSTANCE;

@@ -2,6 +2,9 @@ package com.bb.kalah.model;
 
 import lombok.Getter;
 
+/**
+ * Player Kalah
+ */
 @Getter
 public class Kalah implements Sowable{
 

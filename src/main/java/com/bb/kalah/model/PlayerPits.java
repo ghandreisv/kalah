@@ -3,6 +3,9 @@ package com.bb.kalah.model;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Player pits
+ */
 public class PlayerPits implements Sowable {
 
     private static final int PITS_NR = 6;

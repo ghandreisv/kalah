@@ -3,6 +3,9 @@ package com.bb.kalah.model;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Game session class, represents an actual game
+ */
 @Getter
 @Slf4j
 public class GameSession {
@@ -77,6 +80,13 @@ public class GameSession {
         return true;
     }
 
+    /**
+     * Perform the actual sowing
+     * @param sowables list of the sowable entities e.g. player pits or kalah
+     * @param startPit pit index to start the sowing
+     * @param seedsAmount amount of seeds to sow
+     * @return sowing result
+     */
     private SowResult sowSeeds(Sowable[] sowables, int startPit, int seedsAmount) {
         int sowableIndex = 0;
         SowResult result = null;
@@ -94,6 +104,11 @@ public class GameSession {
         return result;
     }
 
+    /**
+     * tear down actions before player move end like: steal opponent seeds, check win condition etc.
+     * @param currentPlayer player who made the move
+     * @param sowResult sowing result
+     */
     private void endPlayerMove(PlayerPart currentPlayer, SowResult sowResult) {
         //check for opponent seeds collect
         if(!sowResult.isKalah() && sowResult.getPlayerPart() == currentPlayer) {
@@ -116,6 +131,9 @@ public class GameSession {
         return playerPart == playerA ? playerB : playerA;
     }
 
+    /**
+     * ends the game session
+     */
     public void closeSession(){
         this.status = GameStatus.ENDED;
         GameSessionManager.INSTANCE.closeSession(getGameSessionId());

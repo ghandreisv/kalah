@@ -2,6 +2,9 @@ package com.bb.kalah.model;
 
 import lombok.Data;
 
+/**
+ * Player part represents a player in the game session
+ */
 @Data
 public class PlayerPart {
 

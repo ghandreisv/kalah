@@ -4,6 +4,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * Game session manager singletone
+ */
 public enum GameSessionManager {
 
     INSTANCE;
