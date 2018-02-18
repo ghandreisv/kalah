@@ -42,7 +42,7 @@ public class MessageProvider {
                 msg = String.format(msg, gameSession.getLastMove().getStartPit(), gameSession.getPlayerA().getPits().getPitsNumber()-1);
                 break;
             case ERR_PLAYER_NOT_FOUND:
-                msg = String.format(msg, gameSession.getLastMove().getPlayerId());
+                msg = String.format(msg, gameSession.getLastMove().getPlayerId(), gameSession.getGameSessionId());
                 break;
                 default:
                     // do nothing

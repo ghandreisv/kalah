@@ -14,6 +14,9 @@ Then, just access `http://localhost:8080/`
  In order to make a move run:
  
  `http://localhost:8080/move?game_id=<id>&player_id=<player_id>&start_pit=<start_pit>`
+
+ In order to close game session run:
+ `http://localhost:8080/endGame?game_id=<id>`
  
  [1]: https://en.wikipedia.org/wiki/Kalah
  [2]: http://www.mojohaus.org/exec-maven-plugin/

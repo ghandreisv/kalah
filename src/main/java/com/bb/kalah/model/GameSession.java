@@ -111,8 +111,10 @@ public class GameSession {
      */
     private void endPlayerMove(PlayerPart currentPlayer, SowResult sowResult) {
         //check for opponent seeds collect
-        if(!sowResult.isKalah() && sowResult.getPlayerPart() == currentPlayer) {
-            int seedsAmount = getOtherPlayer(currentPlayer).getPits().pickMirrorSeeds(sowResult.getEndPit());
+        if(!sowResult.isKalah() && (sowResult.getPlayerPart() == currentPlayer)
+                && (currentPlayer.getPits().getSeedsAmount(sowResult.getEndPit()) == 1)) {
+            int seedsAmount = getOtherPlayer(currentPlayer).getPits().pickMirrorSeeds(sowResult.getEndPit())
+                    + currentPlayer.getPits().pickSeeds(sowResult.getEndPit());
             currentPlayer.getKalah().addSeeds(seedsAmount);
         }
         //check for win condition
@@ -120,7 +122,7 @@ public class GameSession {
             playerA.getKalah().addSeeds(playerA.getPits());
             playerB.getKalah().addSeeds(playerB.getPits());
             lastMoveResult = PlayerMoveResult.SUCCESS_GAME_OVER;
-            closeSession();
+            GameSessionManager.INSTANCE.closeSession(getGameSessionId());
         }
         //calc next turn player
         this.nextPlayer = sowResult.isKalah() ? currentPlayer : getOtherPlayer(currentPlayer);
@@ -133,9 +135,8 @@ public class GameSession {
     /**
      * ends the game session
      */
-    private void closeSession(){
+    void closeSession(){
         this.status = GameStatus.ENDED;
-        GameSessionManager.INSTANCE.closeSession(getGameSessionId());
     }
 
 }

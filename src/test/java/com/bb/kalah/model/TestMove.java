@@ -48,10 +48,10 @@ public class TestMove extends TestRoot {
         assertTrue("Found non empty pits after game end (Player A)", gameSession.getPlayerA().getPits().isEmpty());
         assertTrue("Found non empty pits after game end (Player B)", gameSession.getPlayerB().getPits().isEmpty());
         // check score
-        assertEquals("Wrong end score", 40, gameSession.getPlayerA().getKalah().getSeedsAmount());
-        assertEquals("Wrong end score", 32, gameSession.getPlayerB().getKalah().getSeedsAmount());
+        assertEquals("Wrong end score", 50, gameSession.getPlayerA().getKalah().getSeedsAmount());
+        assertEquals("Wrong end score", 22, gameSession.getPlayerB().getKalah().getSeedsAmount());
         // check moves number
-        assertEquals("Wrong moves number", 25, gameSession.getMoveNumber().get());
+        assertEquals("Wrong moves number", 27, gameSession.getMoveNumber().get());
         // check winner
         WinnerCalculator winnerCalculator = new WinnerCalculator();
         assertEquals("Wrong winner", gameSession.getPlayerA(), winnerCalculator.getWinner(gameSession));
@@ -63,8 +63,9 @@ public class TestMove extends TestRoot {
         gameSession.getPlayerA().getPits().pits[1] = 0;
         gameSession.handlePlayerMove(gameSession.getPlayerA().getId(), 0);
         assertEquals("Expected successful move", PlayerMoveResult.SUCCESS, gameSession.getLastMoveResult());
-        assertEquals("Wrong player A Kalah score", 6, gameSession.getPlayerA().getKalah().getSeedsAmount());
+        assertEquals("Wrong player A collected pit amount", 0, gameSession.getPlayerA().getPits().getSeedsAmount(0));
         assertEquals("Wrong player B mirror pit amount", 0, gameSession.getPlayerB().getPits().getSeedsAmount(4));
+        assertEquals("Wrong player A Kalah score", 7, gameSession.getPlayerA().getKalah().getSeedsAmount());
     }
 
     @Test

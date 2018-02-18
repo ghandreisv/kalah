@@ -1,6 +1,7 @@
 package com.bb.kalah.model;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -30,7 +31,9 @@ public enum GameSessionManager {
         return games.get(gameSessionId);
     }
 
-    public void closeSession(long gameSessionId) {
-        this.games.remove(gameSessionId);
+    public GameSession closeSession(long gameSessionId) {
+        GameSession gameSession = this.games.remove(gameSessionId);
+        Optional.ofNullable(gameSession).ifPresent(GameSession::closeSession);
+        return gameSession;
     }
 }

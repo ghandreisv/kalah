@@ -25,6 +25,15 @@ public class KalahController {
         return gameSessionAdapter.fromModel(gameSession);
     }
 
+    @RequestMapping("/endGame")
+    public GameSessionView startGame(@RequestParam(value="game_id") long gameId) {
+        GameSession gameSession = GameSessionManager.INSTANCE.closeSession(gameId);
+        if(gameSession == null) {
+            throw new BadRequestException("Game session id=" + gameId + " not found");
+        }
+        return gameSessionAdapter.fromModel(gameSession);
+    }
+
     @RequestMapping("/move")
     public PlayerMoveResultView doMove(@RequestParam(value="game_id", required = false) Long gameId,
                                        @RequestParam(value="player_id", required = false) Long playerId,
@@ -34,7 +43,7 @@ public class KalahController {
         validateMoveParameter("start_pit", startPit);
         GameSession gameSession = GameSessionManager.INSTANCE.getGameSession(gameId);
         if(gameSession == null) {
-            throw new BadRequestException("Game session id=" + gameId + " not found.");
+            throw new BadRequestException("Game session id=" + gameId + " not found");
         }
         gameSession.handlePlayerMove(playerId, startPit);
 
