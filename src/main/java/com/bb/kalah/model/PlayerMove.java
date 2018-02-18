@@ -20,6 +20,6 @@ public class PlayerMove {
     public String toString(){
         return "PlayerMove[" + "playerId=" + playerId +
                 ";name=" + (player != null ? player.getName() : null) +
-                ";startPit=" + startPit;
+                ";startPit=" + startPit + "]";
     }
 }

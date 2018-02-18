@@ -1,5 +1,8 @@
 package com.bb.kalah.model;
 
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 /**
  * Game session printer utility singleton
  */
@@ -10,6 +13,8 @@ public enum GameSessionPrinter {
     public String printGameSession(GameSession gameSession) {
         StringBuilder sb = new StringBuilder();
         sb.append("\nGame status: ").append(gameSession.getStatus());
+        //moves number
+        sb.append("\nMove number: ").append(gameSession.getMoveNumber().get());
         //last move
         sb.append("\nLast move: ").append(gameSession.getLastMove());
         //last result
@@ -21,9 +26,9 @@ public enum GameSessionPrinter {
         }
         /* board status*/
         sb.append("\n").append(gameSession.getPlayerA().getKalah())
-                .append(" ").append(new StringBuilder(gameSession.getPlayerA().getPits().toString()).reverse().toString())
+                .append(" ").append(formatInversedPitData(gameSession.getPlayerA().getPits().getPits()))
 
-                .append("\n").append(gameSession.getPlayerB().getPits())
+                .append("\n").append(formatPitData(gameSession.getPlayerB().getPits().getPits()))
                 .append(" ").append(gameSession.getPlayerB().getKalah())
                 /* player B*/
                 .append("\nPlayer ").append(gameSession.getPlayerB().getName());
@@ -32,5 +37,21 @@ public enum GameSessionPrinter {
             sb.append(" - your turn");
         }
         return sb.toString();
+    }
+
+    private String formatPitData(int[] pits) {
+        return IntStream.of(pits).mapToObj(String::valueOf)
+                .collect(Collectors.joining(" | ", "| ", " |"))
+                    + System.getProperty("line.separator") +
+                IntStream.range(0, pits.length).mapToObj(String::valueOf)
+                        .collect(Collectors.joining(" * ", "* ", " *"));
+    }
+
+    private String formatInversedPitData(int[] pits) {
+        return IntStream.range(0, pits.length).map(i -> pits.length - i - 1).mapToObj(String::valueOf)
+                .collect(Collectors.joining(" * ", "* ", " *"))
+                       + System.getProperty("line.separator") +
+                IntStream.range(0, pits.length).map(i -> pits[pits.length - i - 1]).mapToObj(String::valueOf)
+                .collect(Collectors.joining(" | ", "| ", " |"));
     }
 }

@@ -3,6 +3,8 @@ package com.bb.kalah.model;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Game session class, represents an actual game
  */
@@ -21,6 +23,7 @@ public class GameSession {
 
     private PlayerMove lastMove;
     private PlayerMoveResult lastMoveResult;
+    private AtomicInteger moveNumber;
 
     public GameSession(Long gameSessionId, PlayerPart playerA, PlayerPart playerB){
         this.gameSessionId = gameSessionId;
@@ -29,15 +32,19 @@ public class GameSession {
         this.nextPlayer = playerA;
         this.status = GameStatus.IN_PROGRESS;
         this.creationTime = System.currentTimeMillis();
-        log.debug(GameSessionPrinter.INSTANCE.printGameSession(this));
+        this.moveNumber = new AtomicInteger();
+        log.debug("New game created:{}", GameSessionPrinter.INSTANCE.printGameSession(this));
     }
 
     public PlayerMoveResult handlePlayerMove(long playerId, int startPit) {
         PlayerMove playerMove = PlayerMove.createPlayerMove(this, playerId, startPit);
         this.lastMove = playerMove;
-        this.lastMoveResult = new PlayerMoveResult();
+        this.moveNumber.incrementAndGet();
 
-        if(validateMove(playerMove, lastMoveResult)) {
+        log.debug("Performing player move{}",  GameSessionPrinter.INSTANCE.printGameSession(this));
+        this.lastMoveResult = validateMove(playerMove);
+
+        if(PlayerMoveResult.SUCCESS.equals(this.lastMoveResult)) {
                 PlayerPart currentPlayer = playerMove.getPlayer();
                 int seedsAmount = currentPlayer.getPits().pickSeeds(startPit);
                 SowResult sowResult = sowSeeds(
@@ -45,39 +52,32 @@ public class GameSession {
                         startPit + 1, seedsAmount);
                 endPlayerMove(currentPlayer, sowResult);
         }
-        log.debug(GameSessionPrinter.INSTANCE.printGameSession(this));
+        log.debug("Player move result{}", GameSessionPrinter.INSTANCE.printGameSession(this));
         return lastMoveResult;
     }
 
-    private boolean validateMove(PlayerMove playerMove, PlayerMoveResult playerMoveResult){
+    private PlayerMoveResult validateMove(PlayerMove playerMove){
         // check player was found
         if(playerMove.getPlayer() == null) {
-            playerMoveResult.errorResult(String.format("Player id=%d not found in game session id=%d",
-                    playerMove.getPlayerId(), getGameSessionId()));
-            return false;
+            return PlayerMoveResult.ERR_PLAYER_NOT_FOUND;
         }
         // check game is still running
         if(GameStatus.ENDED.equals(status)){
-            playerMoveResult.errorResult("Moves not allowed after game is ended");
-            return false;
+            return PlayerMoveResult.ERR_GAME_IS_OVER;
         }
         //check it is player's turn
         if(playerMove.getPlayer() != nextPlayer) {
-            playerMoveResult.errorResult("It is opponent's turn");
-            return false;
+            return PlayerMoveResult.ERR_OPPONENT_TURN;
         }
         //check pit index is in range
         if(playerMove.getStartPit() > playerMove.getPlayer().getPits().getPitsNumber() -1 || playerMove.getStartPit() < 0) {
-            playerMoveResult.errorResult(String.format("Invalid pit index '%d' expected a value in range [0;%d]",
-                    playerMove.getStartPit(), playerMove.getPlayer().getPits().getPitsNumber() -1));
-            return false;
+            return PlayerMoveResult.ERR_INVALID_PIT_INDEX;
         }
         //check pit is not empty
         if(playerMove.getPlayer().getPits().getSeedsAmount(playerMove.getStartPit()) == 0) {
-            playerMoveResult.errorResult("The selected pit is empty");
-            return false;
+            return PlayerMoveResult.ERR_PIT_IS_EMPTY;
         }
-        return true;
+        return PlayerMoveResult.SUCCESS;
     }
 
     /**
@@ -119,8 +119,7 @@ public class GameSession {
         if(playerA.getPits().isEmpty() || playerB.getPits().isEmpty()) {
             playerA.getKalah().addSeeds(playerA.getPits());
             playerB.getKalah().addSeeds(playerB.getPits());
-            lastMoveResult.setMessage("Game over! Winner="
-                    + (playerA.getKalah().getSeedsAmount() > playerB.getKalah().getSeedsAmount() ? playerA.getName() : playerB.getName()));
+            lastMoveResult = PlayerMoveResult.SUCCESS_GAME_OVER;
             closeSession();
         }
         //calc next turn player
@@ -134,7 +133,7 @@ public class GameSession {
     /**
      * ends the game session
      */
-    public void closeSession(){
+    private void closeSession(){
         this.status = GameStatus.ENDED;
         GameSessionManager.INSTANCE.closeSession(getGameSessionId());
     }

@@ -12,20 +12,26 @@ public class TestEndGame extends TestRoot {
     public void testEndGame() {
         gameSession.getPlayerA().getPits().pits = new int[]{0, 0, 0, 0, 0, 1};
         gameSession.handlePlayerMove(gameSession.getPlayerA().getId(), 5);
+        // check move result
+        assertEquals("Expected successful game over", PlayerMoveResult.SUCCESS_GAME_OVER, gameSession.getLastMoveResult());
         // check pits
         assertTrue("Found non empty pits after game end (Player A)", gameSession.getPlayerA().getPits().isEmpty());
         assertTrue("Found non empty pits after game end (Player B)", gameSession.getPlayerB().getPits().isEmpty());
         // check score
         assertEquals("Wrong end score", 1, gameSession.getPlayerA().getKalah().getSeedsAmount());
         assertEquals("Wrong end score", 36, gameSession.getPlayerB().getKalah().getSeedsAmount());
+        // check winner
+        WinnerCalculator winnerCalculator = new WinnerCalculator();
+        assertEquals("Wrong winner", gameSession.getPlayerB(), winnerCalculator.getWinner(gameSession));
     }
 
     @Test
     public void testMoveAfterEndGame() {
         gameSession.getPlayerA().getPits().pits = new int[]{0, 0, 0, 0, 0, 1};
         gameSession.handlePlayerMove(gameSession.getPlayerA().getId(), 5);
+        assertEquals("Expected successful game over", PlayerMoveResult.SUCCESS_GAME_OVER, gameSession.getLastMoveResult());
         gameSession.handlePlayerMove(gameSession.getPlayerA().getId(), 5);
-        assertFalse("Player move should not be allowed after game end", gameSession.getLastMoveResult().isOk());
+        assertEquals("Player move should not be allowed after game end", PlayerMoveResult.ERR_GAME_IS_OVER, gameSession.getLastMoveResult());
         // check pits
         assertTrue("Found non empty pits after game end (Player A)", gameSession.getPlayerA().getPits().isEmpty());
         assertTrue("Found non empty pits after game end (Player B)", gameSession.getPlayerB().getPits().isEmpty());

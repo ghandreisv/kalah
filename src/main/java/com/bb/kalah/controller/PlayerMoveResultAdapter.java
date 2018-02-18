@@ -11,6 +11,8 @@ public class PlayerMoveResultAdapter {
 
     @Autowired
     private GameSessionAdapter gameSessionAdapter;
+    @Autowired
+    private MessageProvider messageProvider;
 
     public PlayerMoveResultView fromModel(GameSession gameSession){
         PlayerMoveResultView playerMoveResultView = new PlayerMoveResultView();
@@ -21,10 +23,14 @@ public class PlayerMoveResultAdapter {
             playerMoveResultView.setIsSuccesful(null);
             playerMoveResultView.setMessage(null);
         } else {
-            playerMoveResultView.setIsSuccesful(playerMoveResult.isOk());
-            playerMoveResultView.setMessage(playerMoveResult.getMessage());
+            playerMoveResultView.setIsSuccesful(isMessageSuccess(playerMoveResult));
+            playerMoveResultView.setMessage(messageProvider.getMessage(playerMoveResult, gameSession));
         }
 
         return playerMoveResultView;
+    }
+
+    private boolean isMessageSuccess(PlayerMoveResult moveResult) {
+        return PlayerMoveResult.SUCCESS.equals(moveResult) || PlayerMoveResult.SUCCESS_GAME_OVER.equals(moveResult);
     }
 }
