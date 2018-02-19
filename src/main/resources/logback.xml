@@ -10,6 +10,7 @@
     </appender>
 
     <logger name="com.bb.kalah.model" level="DEBUG"/>
+    <logger name="com.bb.kalah.controller" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="CON"/>

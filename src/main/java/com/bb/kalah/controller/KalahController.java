@@ -5,12 +5,14 @@ import com.bb.kalah.model.GameSessionManager;
 import com.bb.kalah.view.BadRequestException;
 import com.bb.kalah.view.GameSessionView;
 import com.bb.kalah.view.PlayerMoveResultView;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Slf4j
 public class KalahController {
 
     @Autowired
@@ -19,19 +21,23 @@ public class KalahController {
     private PlayerMoveResultAdapter playerMoveResultAdapter;
 
     @RequestMapping("/newGame")
-    public GameSessionView startGame(@RequestParam(value="playerA", defaultValue="Ann") String playerA,
-                                     @RequestParam(value="playerB", defaultValue="Bob") String playerB) {
+    public GameSessionView startGame(@RequestParam(value="player_a", defaultValue="Ann") String playerA,
+                                     @RequestParam(value="player_b", defaultValue="Bob") String playerB) {
         GameSession gameSession = GameSessionManager.INSTANCE.newGameSession(playerA, playerB);
-        return gameSessionAdapter.fromModel(gameSession);
+        GameSessionView gameSessionView = gameSessionAdapter.fromModel(gameSession);
+        log.debug("{}", gameSessionView);
+        return gameSessionView;
     }
 
     @RequestMapping("/endGame")
-    public GameSessionView startGame(@RequestParam(value="game_id") long gameId) {
+    public GameSessionView endGame(@RequestParam(value="game_id") long gameId) {
         GameSession gameSession = GameSessionManager.INSTANCE.closeSession(gameId);
         if(gameSession == null) {
             throw new BadRequestException("Game session id=" + gameId + " not found");
         }
-        return gameSessionAdapter.fromModel(gameSession);
+        GameSessionView gameSessionView = gameSessionAdapter.fromModel(gameSession);
+        log.debug("{}", gameSessionView);
+        return gameSessionView;
     }
 
     @RequestMapping("/move")
@@ -46,8 +52,9 @@ public class KalahController {
             throw new BadRequestException("Game session id=" + gameId + " not found");
         }
         gameSession.handlePlayerMove(playerId, startPit);
-
-        return playerMoveResultAdapter.fromModel(gameSession);
+        PlayerMoveResultView playerMoveResultView = playerMoveResultAdapter.fromModel(gameSession);
+        log.debug("{}", playerMoveResultView);
+        return playerMoveResultView;
     }
 
     private void validateMoveParameter(String paramName, Object paramValue) {

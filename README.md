@@ -10,6 +10,8 @@ Could be started by:
 Then, just access `http://localhost:8080/` 
  
  In order to start a new game run `http://localhost:8080/newGame`. Service will create a new instance of game and return data required to make moves.
+
+ Using `http://localhost:8080/newGame?player_a=<name>&player_b=<name2>` start a new game with provided players names.
  
  In order to make a move run:
  
