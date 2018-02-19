@@ -21,8 +21,7 @@ public class TestEndGame extends TestRoot {
         assertEquals("Wrong end score", 1, gameSession.getPlayerA().getKalah().getSeedsAmount());
         assertEquals("Wrong end score", 36, gameSession.getPlayerB().getKalah().getSeedsAmount());
         // check winner
-        WinnerCalculator winnerCalculator = new WinnerCalculator();
-        assertEquals("Wrong winner", gameSession.getPlayerB(), winnerCalculator.getWinner(gameSession));
+        assertEquals("Wrong winner", gameSession.getPlayerB(), gameSession.getWinner());
     }
 
     @Test

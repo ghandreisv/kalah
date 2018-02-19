@@ -25,7 +25,7 @@ public class GameSession {
     private PlayerMoveResult lastMoveResult;
     private AtomicInteger moveNumber;
 
-    public GameSession(Long gameSessionId, PlayerPart playerA, PlayerPart playerB){
+    GameSession(Long gameSessionId, PlayerPart playerA, PlayerPart playerB){
         this.gameSessionId = gameSessionId;
         this.playerA = playerA;
         this.playerB = playerB;
@@ -130,6 +130,16 @@ public class GameSession {
 
     private PlayerPart getOtherPlayer(PlayerPart playerPart) {
         return playerPart == playerA ? playerB : playerA;
+    }
+
+    public PlayerPart getWinner() {
+        if(getPlayerA().getKalah().getSeedsAmount() > getPlayerB().getKalah().getSeedsAmount()){
+            return getPlayerA();
+        }
+        if(getPlayerA().getKalah().getSeedsAmount() < getPlayerB().getKalah().getSeedsAmount()){
+            return getPlayerB();
+        }
+        return null; //draw?
     }
 
     /**

@@ -53,8 +53,7 @@ public class TestMove extends TestRoot {
         // check moves number
         assertEquals("Wrong moves number", 27, gameSession.getMoveNumber().get());
         // check winner
-        WinnerCalculator winnerCalculator = new WinnerCalculator();
-        assertEquals("Wrong winner", gameSession.getPlayerA(), winnerCalculator.getWinner(gameSession));
+        assertEquals("Wrong winner", gameSession.getPlayerA(), gameSession.getWinner());
     }
 
     @Test

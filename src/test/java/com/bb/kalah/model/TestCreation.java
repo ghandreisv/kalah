@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class TestCreation extends TestRoot {
 
@@ -17,6 +18,11 @@ public class TestCreation extends TestRoot {
         assertEquals(playerBName, gameSession.getPlayerB().getName());
         assertEquals(0, gameSession.getPlayerA().getKalah().getSeedsAmount());
         assertEquals(0, gameSession.getPlayerB().getKalah().getSeedsAmount());
+    }
+
+    @Test
+    public void testWinnerUnknown() {
+        assertNull("Winner expected to be unknown", gameSession.getWinner());
     }
 
 }
